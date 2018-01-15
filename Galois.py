@@ -16,43 +16,37 @@ for i in range(256):
         temp[-1]=0
         temp = temp ^ galois[i]
         galois = np.vstack([galois,(temp ^ primitive)])
-        #2+2
         #For 1 i første kolonne
     else:
         galois = np.vstack([galois,(np.roll(galois[i],-1)) ^ galois[i]])
 
 
-#print(galois)
-# convert int to list
-#[int(x) for x in str(test2)]
 
-# convert hexa to bin (string).
-#bin(int(0x53))[2:].zfill(8)
-
-
-def findInverse(hexa):
-    #Converting from hexa to binary.
-    input = bin(int(hexa,16))[2:].zfill(8)
-    #print("input")
-    #print(input)
-    #converting to a list so we can compare (==).
+# findIndex: Takes a hexadecimal and gives the alpha index number.
+def findIndex(hexa):
+    # Converting from hexa to binary.
+    input = bin(int(hexa, 16))[2:].zfill(8)
+    # converting to a list so we can compare (==).
     input = np.array([int(x) for x in str(input)])
-    #print(input)
-    alphaIndex = np.where(np.all(input==galois,axis=1))
-    #print("alpha")
-    #print(alphaIndex)
-    invAlphaIndex = 256-alphaIndex[0]-1
+    # Getting the index of galois
+    alphaIndex = np.where(np.all(input == galois, axis=1))
+    # [0][0] due to the output np.where gives.
+    return alphaIndex[0][0]
+
+# findInverse: Takes a hex and returns its multiplicative inverse in bin.
+def findInverse(hexa):
+    ##input = bin(int(hexa,16))[2:].zfill(8)
+    alphaIndex=findIndex(hexa)
+    invAlphaIndex = 256-alphaIndex-1
     #print(invAlphaIndex)
-    invAlphaIndex = invAlphaIndex[0]
-    #print(invAlphaIndex)
-    #print(galois[invAlphaIndex])
-    #print(galois[254])
+    invAlphaIndex = invAlphaIndex
     return galois[invAlphaIndex]
 #print('---------------------')
 #print(findInverse(0x02))
 
 # Find det alfa som er de 2 alfaers produkt.
 #print(galois[1+254 % 255])
+
 
 def sboxElement(hexa):
     # Flipper så vi har de vigtigste bit først (?).
@@ -65,18 +59,11 @@ def sboxElement(hexa):
 
     return np.flip(output,0)
 
-#test33=sboxElement(0x03)
-#print(findInverse(0x03))
-#print(sboxElement(0x03))
-#
-#for j in range(8)
-#print(test33[1])
 
 def createSbox():
     sbox=[None]*256
     sbox[0]='0x63'
     for i in range(1,256):
-        #if i <= 15:
             #temp = format(i, '#04x')
         temp = sboxElement(hex(i))
         temp = ''.join(str(x) for x in temp)
@@ -87,10 +74,10 @@ def createSbox():
 
     return sbox
 
-print(findInverse(hex(2)))
-print(sboxElement(hex(2)))
-print('-----------')
-print(createSbox())
+#print(findInverse(hex(2)))
+#print(sboxElement(hex(2)))
+#print('-----------')
+#print(createSbox())
 #print(findInverse(hex(1)))
 
 #print(findInverse(hex()))
@@ -98,24 +85,25 @@ print(createSbox())
 #for i in range(16):
  #   print(format(i, '#04x'))
 # '0x55' --> 0x55
+#print('-----------')
+#print(findIndex(hex(3)))
 
+# takes 2 hexadecimals and multiplies them - returns their galois product index.
 def gfMul(a,b):
-    a = bin(int(a,16))[2:].zfill(8)
-    b = bin(int(b,16))[2:].zfill(8)
-    #converting to a list so we can compare (==).
-    a = np.array([int(x) for x in str(a)])
-    b = np.array([int(x) for x in str(b)])
-    aIndex = np.where(np.all(a==galois,axis=1))
-    bIndex = np.where(np.all(b==galois,axis=1))
-    invAIndex = 256-aIndex[0]-1
-    invBIndex = 256-bIndex[0]-1
-    #converting to a list so we can compare (==).
-    input = np.array([int(x) for x in str(input)])
-    #print(input)
-    alphaIndex = np.where(np.all(input==galois,axis=1))
-    #print("alpha")
-    #print(alphaIndex)
-    invAlphaIndex = 256-alphaIndex[0]-1
-    #print(invAlphaIndex)
-    invAlphaIndex = invAlphaIndex[0]
+    return (findIndex(a)+findIndex(b)) % 255
+#print('------------')
+#print(gfMul(hex(0x57),hex(0x83)))
+#print(galois[178])
 
+print(galois)
+
+def createRcon():
+    rcon=[None]*12
+    rcon[0]='0x8d'
+    rcon[1]='0x01'
+    for i in range(2,12):
+        rcon[i]=hex(2*(pow(2,i-2))%256)
+
+    return rcon
+
+print(createRcon())
