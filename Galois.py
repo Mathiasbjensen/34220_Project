@@ -35,6 +35,10 @@ def findIndex(hexa):
 
 # findInverse: Takes a hex and returns its multiplicative inverse in bin.
 def findInverse(hexa):
+    if isinstance(hexa,np.ndarray):
+        hexa = ''.join(str(x) for x in hexa)
+        hexa = hex(int(hexa, 2))
+
     ##input = bin(int(hexa,16))[2:].zfill(8)
     alphaIndex=findIndex(hexa)
     invAlphaIndex = 256-alphaIndex-1
@@ -62,12 +66,12 @@ def sboxElement(hexa):
 
 def createSbox():
     sbox=[None]*256
-    sbox[0]='0x63'
+    sbox[0]=0x63
     for i in range(1,256):
             #temp = format(i, '#04x')
         temp = sboxElement(hex(i))
         temp = ''.join(str(x) for x in temp)
-        temp = hex(int(temp,2))
+        temp = int(temp,2)
         sbox[i]=temp
         #else:
          #   sbox[i]=sboxElement(hex(i))
@@ -88,22 +92,23 @@ def createSbox():
 #print('-----------')
 #print(findIndex(hex(3)))
 
-# takes 2 hexadecimals and multiplies them - returns their galois product index.
+# takes 2 hexadecimals and multiplies them - returns their galois product in dec/hex.
 def gfMul(a,b):
-    return (findIndex(a)+findIndex(b)) % 255
+    index = (findIndex(hex(a))+findIndex(hex(b))) % 255
+    value = galois[index]
+    value = ''.join(str(x) for x in value)
+    # and now to int
+    return int(value,2)
 #print('------------')
-#print(gfMul(hex(0x57),hex(0x83)))
+#print(gfMul(0x57,0x83))
 #print(galois[178])
+#print((gfMul(0x02,0xd4) ^ gfMul(0x03,0xbf)) ^ 0x5d ^ 0x30)
+#print(galois)
+#print(gfMul(0x57,0x83))
 
-print(galois)
+#print(galois)
 
-def createRcon():
-    rcon=[None]*12
-    rcon[0]='0x8d'
-    rcon[1]='0x01'
-    for i in range(2,12):
-        rcon[i]=hex(2*(pow(2,i-2))%256)
 
-    return rcon
 
-print(createRcon())
+#print(createRcon())
+#print(createSbox())
