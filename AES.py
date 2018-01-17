@@ -31,7 +31,10 @@ def shiftRows(state):
 #print(shiftRows(state))
 
 def addRoundKey(state, roundKey):
+    #print(state)
+    #print(roundKey)
     roundKey = np.array(state) ^ np.array(roundKey)
+    #roundKey
     return roundKey
 
 #print(addRoundKey(state,cipherKey))
@@ -69,10 +72,17 @@ def matrixOutput(state):
 keys = createKeyExpansion(cipherKey)
 
 # **Initial round** - add round key (cipherKey since it's initial round. and get a new state.
+print(state)
 state=addRoundKey(state,getRoundKey(0))
-
-
+#print(matrixOutput(state))
+"""print(matrixOutput(state))
+state = subBytes(state)
+state = shiftRows(state)
+state = mixColumns(state)
+state = addRoundKey(state, getRoundKey(i))
+# print(state)
 # **The next 9 rounds**
+"""
 
 for i in range(1,10):
 
@@ -81,6 +91,8 @@ for i in range(1,10):
     state = mixColumns(state)
     state = addRoundKey(state,getRoundKey(i))
     #print(state)
+    #print(i)
+    #print(matrixOutput(state))
 
 
 # **Final round**
@@ -88,12 +100,17 @@ for i in range(1,10):
 state = subBytes(state)
 state = shiftRows(state)
 output = addRoundKey(state,getRoundKey(10))
-print(output)
+#print(output)
 
 
 
-print(matrixOutput(output))
+#print(matrixOutput(output))
 
+#print('---------------------')
+#print(keys)
+#test = np.array([hex(x) for x in keys])
+#test = np.reshape(test, (44, 4), order='F')
+#print(test)
 print('--------------------------------------------------------')
 
 # --- DECRYPTION ---
@@ -104,23 +121,19 @@ state = addRoundKey(state,getRoundKey(10))
 
 # **The next 9 rounds**
 # Backwards for loop
-"""for i in range(9,1,-1):
-    print(state)
+for i in range(9,0,-1):
     state = shiftRowsInv(state)
     state = subBytesInv(state)
     state = addRoundKey(state,getRoundKey(i))
     state = mixColumnsInv(state)
-    print(i)
-"""
-state = shiftRowsInv(state)
-state = subBytesInv(state)
-state = addRoundKey(state, getRoundKey(9))
-state = mixColumnsInv(state)
-state = shiftRowsInv(state)
-state = subBytesInv(state)
-state = addRoundKey(state, getRoundKey(8))
-#state = mixColumnsInv(state)
 
+
+# --- Final Round ---
+state = shiftRowsInv(state)
+state = subBytesInv(state)
+decrypted = addRoundKey(state,getRoundKey(0))
+print('--------------------')
+print(matrixOutput(decrypted))
 
 
 print(state)

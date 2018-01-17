@@ -23,5 +23,5 @@ def stateToString(a):
         output = output + chr(a[i])
     return output
 
-print(stateToString(test))
+#print(stateToString(test))
 

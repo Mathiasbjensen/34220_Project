@@ -7,7 +7,7 @@ state = [0x32, 0x43, 0xf6, 0xa8, 0x88, 0x5a, 0x30, 0x8d, 0x31, 0x31, 0x98, 0xa2,
 def createInvSbox():
     invSbox = [None] * 256
     sbox = createSbox()
-    print(sbox)
+    #print(sbox)
     for i in range(256):
         #print(i)
         invSbox[sbox[i]] = i
@@ -37,10 +37,15 @@ def shiftRowsInv(state):
 def subBytesInv(state):
     # Ensures we can both use list and numpy arrays.
     if type(state) != list:
+        #print(state)
         state=state.tolist()
+
     for i in range(len(state)):
         state[i]=invSbox[state[i]]
+        #print(state)
     return state
+
+#print(subBytesInv(np.array([252,11,233,0,16,49,134,123,11,217,160,130,117,252,104,150])))
 
 def mixColumnsInv(state):
     state = np.reshape(state, (4, 4), order='F')
@@ -53,4 +58,6 @@ def mixColumnsInv(state):
         # Converting back to a 1d array.
     return np.reshape(mixed,(1,16),order='F')[0]
 
-print(mixColumnsInv(np.array([0,81,47,209,177,200,137,255,84,118,109,205,250,27,153,234])))
+#print(mixColumnsInv(np.array([0,81,47,209,177,200,137,255,84,118,109,205,250,27,153,234])))
+#print('---------------------------------')
+print(invSbox)

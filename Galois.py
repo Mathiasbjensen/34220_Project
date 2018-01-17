@@ -4,6 +4,7 @@ np.set_printoptions(threshold=np.nan)
 #galois = np.empty(shape=(256,8))
 #print(galois.shape)
 galois = np.array([[0,0,0,0,0,0,0,1]])
+
 primitive=[0,0,0,1,1,0,1,1]
 
 #shiftedState[1] = np.roll(shiftedState[1],-1)
@@ -20,7 +21,7 @@ for i in range(256):
 
 
 
-# findIndex: Takes a hexadecimal and gives the alpha index number.
+# findIndex: Takes a hexadecimal string and gives the alpha index number.
 def findIndex(hexa):
     # Converting from hexa to binary.
     input = bin(int(hexa, 16))[2:].zfill(8)
@@ -30,21 +31,23 @@ def findIndex(hexa):
     alphaIndex = np.where(np.all(input == galois, axis=1))
     # [0][0] due to the output np.where gives.
     return alphaIndex[0][0]
-
+print(findIndex(hex(161)))
 # findInverse: Takes a hex and returns its multiplicative inverse in bin.
 def findInverse(hexa):
     if isinstance(hexa,np.ndarray):
         hexa = ''.join(str(x) for x in hexa)
         hexa = hex(int(hexa, 2))
-
+        print(hexa)
+    if int(hexa,16) == 0:
+        return np.array([0,0,0,0,0,0,0,0])
     ##input = bin(int(hexa,16))[2:].zfill(8)
     alphaIndex=findIndex(hexa)
     invAlphaIndex = 256-alphaIndex-1
     #print(invAlphaIndex)
-    invAlphaIndex = invAlphaIndex
+    #invAlphaIndex = invAlphaIndex
     return galois[invAlphaIndex]
 #print('---------------------')
-#print(findInverse(0x02))
+print(findInverse(hex(0x00)))
 
 # Find det alfa som er de 2 alfaers produkt.
 #print(galois[1+254 % 255])
@@ -72,7 +75,7 @@ def createSbox():
         sbox[i]=temp
     return sbox
 
-
+#print(createSbox())
 
 
 #print(findInverse(hex(2)))
@@ -91,13 +94,16 @@ def createSbox():
 
 # takes 2 hexadecimals and multiplies them - returns their galois product in dec/hex.
 def gfMul(a,b):
+    # In case we have 0, which is not a part of our galois.
+    if a == 0 or b == 0:
+        return 0
     index = (findIndex(hex(a))+findIndex(hex(b))) % 255
     value = galois[index]
     value = ''.join(str(x) for x in value)
     # and now to int
     return int(value,2)
 #print('------------')
-#print(gfMul(0x57,0x83))
+print(gfMul(0x57,0x0))
 #print(galois[178])
 #print((gfMul(0x02,0xd4) ^ gfMul(0x03,0xbf)) ^ 0x5d ^ 0x30)
 #print(galois)
@@ -105,7 +111,7 @@ def gfMul(a,b):
 
 #print(galois)
 
-
-
+#print(len(galois))
+#print(galois)
 #print(createRcon())
 #print(createSbox())
