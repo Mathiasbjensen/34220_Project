@@ -1,7 +1,5 @@
 import numpy as np
 
-
-
 np.set_printoptions(threshold=np.nan)
 #galois = np.empty(shape=(256,8))
 #print(galois.shape)
@@ -53,7 +51,6 @@ def findInverse(hexa):
 
 
 def sboxElement(hexa):
-    # Flipper så vi har de vigtigste bit først (?).
     b = np.flip(findInverse(hexa),0)
     c = np.array([1,1,0,0,0,1,1,0])
     output=np.array([None]*8)
@@ -73,10 +70,10 @@ def createSbox():
         temp = ''.join(str(x) for x in temp)
         temp = int(temp,2)
         sbox[i]=temp
-        #else:
-         #   sbox[i]=sboxElement(hex(i))
-
     return sbox
+
+
+
 
 #print(findInverse(hex(2)))
 #print(sboxElement(hex(2)))

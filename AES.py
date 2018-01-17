@@ -1,6 +1,7 @@
 import numpy as np
 from Galois import *
 from KeyExpansion import *
+from InverseAES import *
 
 #sbox=createSbox()
 state = [0x32, 0x43, 0xf6, 0xa8, 0x88, 0x5a, 0x30, 0x8d, 0x31, 0x31, 0x98, 0xa2, 0xe0, 0x37, 0x07, 0x34]
@@ -12,14 +13,10 @@ cipherKey = [0x2b, 0x7e, 0x15, 0x16, 0x28, 0xae, 0xd2, 0xa6, 0xab, 0xf7, 0x15, 0
 
 rcon = [0x8d, 0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80, 0x1b, 0x36]
 
-#print(int(0x53,16))
-#print(hex(sbox[83]))
-
-
 
 #print(subBytes([1,2,3]))
 
-
+# shiftRows: Takes a list and outputs a list.
 def shiftRows(state):
     # Making the list into a numpy matrix to shift the rows.
     shiftedState=np.reshape(state,(4,4),order='F')
@@ -39,6 +36,7 @@ def addRoundKey(state, roundKey):
 
 #print(addRoundKey(state,cipherKey))
 
+# getRoundKey: Takes a round number (0-10) and returns the round key as a numpy array.
 def getRoundKey(roundNumber):
     if roundNumber == 0:
         roundKey = keys[:,:4]
@@ -46,7 +44,7 @@ def getRoundKey(roundNumber):
         roundKey = keys[:,roundNumber*4:roundNumber*4+4]
     return np.reshape(roundKey, (1, 16), order='F')[0]
 
-
+# Takes an array and returns an array.
 def mixColumns(state):
     state = np.reshape(state, (4, 4), order='F')
     mixed = np.zeros((4,4)).astype(int)
@@ -60,19 +58,19 @@ def mixColumns(state):
 
 #print(mixColumns([0xd4,0xbf,0x5d,0x30,0xe0,0xb4,0x52,0xae,0xb8,0x41,0x11,0xf1,0x1e,0x27,0x98,0xe5]))
 
-
+def matrixOutput(state):
+    output = np.array([hex(x) for x in state])
+    output = np.reshape(output, (4, 4), order='F')
+    return output
 
 # ---------------------------------------------------------------------------------------------- #
 
-
+# Getting the keys needed for encryption.
 keys = createKeyExpansion(cipherKey)
-#print(keys)
-#print('-----------')
-#print(getRoundKey(0))
-#print(keys[:,:4])
+
 # **Initial round** - add round key (cipherKey since it's initial round. and get a new state.
 state=addRoundKey(state,getRoundKey(0))
-#print(state)
+
 
 # **The next 9 rounds**
 
@@ -92,9 +90,37 @@ state = shiftRows(state)
 output = addRoundKey(state,getRoundKey(10))
 print(output)
 
-def matrixOutput(state):
-    output = np.array([hex(x) for x in state])
-    output = np.reshape(output, (4, 4), order='F')
-    return output
+
 
 print(matrixOutput(output))
+
+print('--------------------------------------------------------')
+
+# --- DECRYPTION ---
+
+state = output
+
+state = addRoundKey(state,getRoundKey(10))
+
+# **The next 9 rounds**
+# Backwards for loop
+"""for i in range(9,1,-1):
+    print(state)
+    state = shiftRowsInv(state)
+    state = subBytesInv(state)
+    state = addRoundKey(state,getRoundKey(i))
+    state = mixColumnsInv(state)
+    print(i)
+"""
+state = shiftRowsInv(state)
+state = subBytesInv(state)
+state = addRoundKey(state, getRoundKey(9))
+state = mixColumnsInv(state)
+state = shiftRowsInv(state)
+state = subBytesInv(state)
+state = addRoundKey(state, getRoundKey(8))
+#state = mixColumnsInv(state)
+
+
+
+print(state)

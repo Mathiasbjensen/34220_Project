@@ -4,24 +4,19 @@ from Galois import *
 state = [0x32, 0x43, 0xf6, 0xa8, 0x88, 0x5a, 0x30, 0x8d, 0x31, 0x31, 0x98, 0xa2, 0xe0, 0x37, 0x07, 0x34]
 
 
-def sboxElementInv(hexa):
-    # Flipper så vi har de vigtigste bit først (?).
-    #b = np.flip(findInverse(hexa),0)
-    #b = np.flip(galois[findIndex(hex(hexa))],0)
-    b = galois[findIndex(hex(hexa))]
-    c = np.array([0,0,0,0,0,1,0,1])
-    c = np.flip(c,0)
-    #c = np.array([1,1,0,0,0,1,1,0])
-    #c = np.array([0,1,1,0,0,0,1,1])
-    output=np.array([None]*8)
-    for i in range(8):
-        output[i] = b[i] ^ b[(i+4)%8] ^ b[(i+5)%8] ^ b[(i+6)%8] ^ b[(i+7)%8] ^ c[i]
-    output = findInverse(output)
-    #converting from list to hex
+def createInvSbox():
+    invSbox = [None] * 256
+    sbox = createSbox()
+    print(sbox)
+    for i in range(256):
+        #print(i)
+        invSbox[sbox[i]] = i
+    return invSbox
 
-    return output
+invSbox = createInvSbox()
 
-print(sboxElementInv(0x01))
+
+#print(sboxElementInv(0x01))
 #print(findIndex(hex(1)))
 
 def shiftRowsInv(state):
@@ -36,16 +31,16 @@ def shiftRowsInv(state):
 
     return shiftedState
 
-print(shiftRowsInv(state))
+#print(shiftRowsInv(state))
 
 
-"""def subBytes(state):
+def subBytesInv(state):
     # Ensures we can both use list and numpy arrays.
     if type(state) != list:
         state=state.tolist()
     for i in range(len(state)):
         state[i]=invSbox[state[i]]
-    return state"""
+    return state
 
 def mixColumnsInv(state):
     state = np.reshape(state, (4, 4), order='F')
@@ -57,3 +52,5 @@ def mixColumnsInv(state):
         mixed[3,i] = gfMul(0x0b,state[0,i]) ^ gfMul(0x0d,state[1,i]) ^ gfMul(0x09,state[2,i]) ^ gfMul(0x0e,state[3,i])
         # Converting back to a 1d array.
     return np.reshape(mixed,(1,16),order='F')[0]
+
+print(mixColumnsInv(np.array([0,81,47,209,177,200,137,255,84,118,109,205,250,27,153,234])))
