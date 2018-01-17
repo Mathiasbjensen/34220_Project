@@ -4,17 +4,13 @@ from KeyExpansion import *
 from InverseAES import *
 
 #sbox=createSbox()
-state = [0x32, 0x43, 0xf6, 0xa8, 0x88, 0x5a, 0x30, 0x8d, 0x31, 0x31, 0x98, 0xa2, 0xe0, 0x37, 0x07, 0x34]
+#state = [0x32, 0x43, 0xf6, 0xa8, 0x88, 0x5a, 0x30, 0x8d, 0x31, 0x31, 0x98, 0xa2, 0xe0, 0x37, 0x07, 0x34]
 #state = [0x00, 0x1f, 0x0e, 0x54, 0x3c, 0x4e, 0x08, 0x59, 0x6e, 0x22, 0x1b, 0x0b, 0x47, 0x74, 0x31, 0x1a]
 cipherKey = [0x2b, 0x7e, 0x15, 0x16, 0x28, 0xae, 0xd2, 0xa6, 0xab, 0xf7, 0x15, 0x88, 0x09, 0xcf, 0x4f, 0x3c]
 #cipherKey = [0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00]
-
-
-
+keys = createKeyExpansion(cipherKey)
 rcon = [0x8d, 0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80, 0x1b, 0x36]
 
-
-#print(subBytes([1,2,3]))
 
 # shiftRows: Takes a list and outputs a list.
 def shiftRows(state):
@@ -69,20 +65,11 @@ def matrixOutput(state):
 # ---------------------------------------------------------------------------------------------- #
 
 # Getting the keys needed for encryption.
-keys = createKeyExpansion(cipherKey)
+"""keys = createKeyExpansion(cipherKey)
 
 # **Initial round** - add round key (cipherKey since it's initial round. and get a new state.
 print(state)
 state=addRoundKey(state,getRoundKey(0))
-#print(matrixOutput(state))
-"""print(matrixOutput(state))
-state = subBytes(state)
-state = shiftRows(state)
-state = mixColumns(state)
-state = addRoundKey(state, getRoundKey(i))
-# print(state)
-# **The next 9 rounds**
-"""
 
 for i in range(1,10):
 
@@ -100,17 +87,7 @@ for i in range(1,10):
 state = subBytes(state)
 state = shiftRows(state)
 output = addRoundKey(state,getRoundKey(10))
-#print(output)
 
-
-
-#print(matrixOutput(output))
-
-#print('---------------------')
-#print(keys)
-#test = np.array([hex(x) for x in keys])
-#test = np.reshape(test, (44, 4), order='F')
-#print(test)
 print('--------------------------------------------------------')
 
 # --- DECRYPTION ---
@@ -136,4 +113,4 @@ print('--------------------')
 print(matrixOutput(decrypted))
 
 
-print(state)
+print(state)"""

@@ -60,4 +60,4 @@ def mixColumnsInv(state):
 
 #print(mixColumnsInv(np.array([0,81,47,209,177,200,137,255,84,118,109,205,250,27,153,234])))
 #print('---------------------------------')
-print(invSbox)
+#print(invSbox)

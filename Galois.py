@@ -31,13 +31,13 @@ def findIndex(hexa):
     alphaIndex = np.where(np.all(input == galois, axis=1))
     # [0][0] due to the output np.where gives.
     return alphaIndex[0][0]
-print(findIndex(hex(161)))
+#print(findIndex(hex(161)))
 # findInverse: Takes a hex and returns its multiplicative inverse in bin.
 def findInverse(hexa):
     if isinstance(hexa,np.ndarray):
         hexa = ''.join(str(x) for x in hexa)
         hexa = hex(int(hexa, 2))
-        print(hexa)
+        #print(hexa)
     if int(hexa,16) == 0:
         return np.array([0,0,0,0,0,0,0,0])
     ##input = bin(int(hexa,16))[2:].zfill(8)
@@ -47,7 +47,7 @@ def findInverse(hexa):
     #invAlphaIndex = invAlphaIndex
     return galois[invAlphaIndex]
 #print('---------------------')
-print(findInverse(hex(0x00)))
+#print(findInverse(hex(0x00)))
 
 # Find det alfa som er de 2 alfaers produkt.
 #print(galois[1+254 % 255])
@@ -103,7 +103,7 @@ def gfMul(a,b):
     # and now to int
     return int(value,2)
 #print('------------')
-print(gfMul(0x57,0x0))
+#print(gfMul(0x57,0x0))
 #print(galois[178])
 #print((gfMul(0x02,0xd4) ^ gfMul(0x03,0xbf)) ^ 0x5d ^ 0x30)
 #print(galois)
