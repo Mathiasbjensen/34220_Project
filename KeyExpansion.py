@@ -1,18 +1,23 @@
-import numpy as np
-#from AES import *
 from Galois import *
-
-#cipherKey = [0x2b, 0x7e, 0x15, 0x16, 0x28, 0xae, 0xd2, 0xa6, 0xab, 0xf7, 0x15, 0x88, 0x09, 0xcf, 0x4f, 0x3c]
+# We only need 10 bits of the original rcon and 3 rows of padded 0s.
 rcon = np.array([[0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80, 0x1b, 0x36],
                 [0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0]])
 sbox = createSbox()
 
 def rotWord(cipherCol):
-    rotated=[]
+    """
+    :param cipherCol: numpy array
+    :return: numpy array
+    """
     rotated=np.roll(cipherCol,-1)
     return rotated
 
+
 def subBytes(state):
+    """
+    :param state: list OR numpy array
+    :return: list
+    """
     # Ensures we can both use list and numpy arrays.
     if type(state) != list:
         state=state.tolist()
@@ -20,9 +25,13 @@ def subBytes(state):
         state[i]=sbox[state[i]]
     return state
 
-#print(rotWord(np.array([43,126,21,22])))
 
 def createKeyExpansion(cipherKey):
+    """
+    Creates all 11 keys (including the cipherKey
+    :param cipherKey: list
+    :return: 4x44 2D numpy array
+    """
     # Change cipherKey from array to 4 by 4 matrix.
     roundKeys = np.reshape(cipherKey, (4, 4), order='F')
 
@@ -34,12 +43,5 @@ def createKeyExpansion(cipherKey):
             temp = roundKeys[:,i*4+j-1] ^ roundKeys[:,i*4+j-4]
             roundKeys = np.column_stack((roundKeys, temp))
 
-        #roundKeys = np.hstack([roundKeys,roundKeys[:,i-4] ^ int((subBytes(rotWord(roundKeys[:,i-1]))),16) ^ rconPad[:,i-4]])
-
     return roundKeys
-#print('----------')
-#print(createKeyExpansion(cipherKey))
-#keySchedule=createKeyExpansion(cipherKey)
-#print(keySchedule[:,4:8])
-#print(cipherKey)
 

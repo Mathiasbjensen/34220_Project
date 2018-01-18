@@ -1,25 +1,27 @@
-import numpy as np
 from Galois import *
 
-state = [0x32, 0x43, 0xf6, 0xa8, 0x88, 0x5a, 0x30, 0x8d, 0x31, 0x31, 0x98, 0xa2, 0xe0, 0x37, 0x07, 0x34]
+state = []
 
 
 def createInvSbox():
+    """
+    Creates the inverse s-box
+    :return: list
+    """
     invSbox = [None] * 256
     sbox = createSbox()
-    #print(sbox)
     for i in range(256):
-        #print(i)
         invSbox[sbox[i]] = i
     return invSbox
 
 invSbox = createInvSbox()
 
 
-#print(sboxElementInv(0x01))
-#print(findIndex(hex(1)))
-
 def shiftRowsInv(state):
+    """
+    :param state: list
+    :return: list
+    """
     # Making the list into a numpy matrix to shift the rows.
     shiftedState=np.reshape(state,(4,4),order='F')
     shiftedState[1] = np.roll(shiftedState[1],1)
@@ -31,23 +33,25 @@ def shiftRowsInv(state):
 
     return shiftedState
 
-#print(shiftRowsInv(state))
-
 
 def subBytesInv(state):
+    """
+    :param state: list OR numpy array
+    :return: list
+    """
     # Ensures we can both use list and numpy arrays.
     if type(state) != list:
-        #print(state)
         state=state.tolist()
-
     for i in range(len(state)):
         state[i]=invSbox[state[i]]
-        #print(state)
     return state
 
-#print(subBytesInv(np.array([252,11,233,0,16,49,134,123,11,217,160,130,117,252,104,150])))
 
 def mixColumnsInv(state):
+    """
+    :param state: numpy array
+    :return: numpy array
+    """
     state = np.reshape(state, (4, 4), order='F')
     mixed = np.zeros((4,4)).astype(int)
     for i in range(4):
@@ -58,6 +62,3 @@ def mixColumnsInv(state):
         # Converting back to a 1d array.
     return np.reshape(mixed,(1,16),order='F')[0]
 
-#print(mixColumnsInv(np.array([0,81,47,209,177,200,137,255,84,118,109,205,250,27,153,234])))
-#print('---------------------------------')
-#print(invSbox)

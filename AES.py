@@ -1,19 +1,19 @@
-import numpy as np
-from Galois import *
-from KeyExpansion import *
 from InverseAES import *
+from KeyExpansion import *
 
 #sbox=createSbox()
 #state = [0x32, 0x43, 0xf6, 0xa8, 0x88, 0x5a, 0x30, 0x8d, 0x31, 0x31, 0x98, 0xa2, 0xe0, 0x37, 0x07, 0x34]
 #state = [0x00, 0x1f, 0x0e, 0x54, 0x3c, 0x4e, 0x08, 0x59, 0x6e, 0x22, 0x1b, 0x0b, 0x47, 0x74, 0x31, 0x1a]
 cipherKey = [0x2b, 0x7e, 0x15, 0x16, 0x28, 0xae, 0xd2, 0xa6, 0xab, 0xf7, 0x15, 0x88, 0x09, 0xcf, 0x4f, 0x3c]
-#cipherKey = [0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00]
-keys = createKeyExpansion(cipherKey)
-rcon = [0x8d, 0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80, 0x1b, 0x36]
+
 
 
 # shiftRows: Takes a list and outputs a list.
 def shiftRows(state):
+    """
+    :param state: Takes a list
+    :return: Outputs a shifted list.
+    """
     # Making the list into a numpy matrix to shift the rows.
     shiftedState=np.reshape(state,(4,4),order='F')
     shiftedState[1] = np.roll(shiftedState[1],-1)
@@ -24,19 +24,25 @@ def shiftRows(state):
     shiftedState = shiftedState.flatten().tolist()
 
     return shiftedState
-#print(shiftRows(state))
 
 def addRoundKey(state, roundKey):
-    #print(state)
-    #print(roundKey)
+    """
+    :param state: List
+    :param roundKey: List
+    :return: the product of the 2 lists XOR'd.
+    """
     roundKey = np.array(state) ^ np.array(roundKey)
-    #roundKey
     return roundKey
 
-#print(addRoundKey(state,cipherKey))
 
-# getRoundKey: Takes a round number (0-10) and returns the round key as a numpy array.
+# getRoundKey:
 def getRoundKey(roundNumber):
+    """
+    Takes a round number (0-10) and returns the round key as a numpy array.
+    :param roundNumber: Int (0-10)
+    :return: List (Round Number)
+    """
+    keys = createKeyExpansion(cipherKey)
     if roundNumber == 0:
         roundKey = keys[:,:4]
     else:
@@ -45,6 +51,10 @@ def getRoundKey(roundNumber):
 
 # Takes an array and returns an array.
 def mixColumns(state):
+    """
+    :param state: numpy array
+    :return: numpy array
+    """
     state = np.reshape(state, (4, 4), order='F')
     mixed = np.zeros((4,4)).astype(int)
     for i in range(4):
@@ -55,62 +65,12 @@ def mixColumns(state):
         # Converting back to a 1d array.
     return np.reshape(mixed,(1,16),order='F')[0]
 
-#print(mixColumns([0xd4,0xbf,0x5d,0x30,0xe0,0xb4,0x52,0xae,0xb8,0x41,0x11,0xf1,0x1e,0x27,0x98,0xe5]))
-
 def matrixOutput(state):
+    """
+    Illustrates the state (vector) as a 4x4 matrix with hex elements.
+    :param state: numpy array
+    :return: 2D numpy array (hexadecimals)
+    """
     output = np.array([hex(x) for x in state])
     output = np.reshape(output, (4, 4), order='F')
     return output
-
-# ---------------------------------------------------------------------------------------------- #
-
-# Getting the keys needed for encryption.
-"""keys = createKeyExpansion(cipherKey)
-
-# **Initial round** - add round key (cipherKey since it's initial round. and get a new state.
-print(state)
-state=addRoundKey(state,getRoundKey(0))
-
-for i in range(1,10):
-
-    state = subBytes(state)
-    state = shiftRows(state)
-    state = mixColumns(state)
-    state = addRoundKey(state,getRoundKey(i))
-    #print(state)
-    #print(i)
-    #print(matrixOutput(state))
-
-
-# **Final round**
-
-state = subBytes(state)
-state = shiftRows(state)
-output = addRoundKey(state,getRoundKey(10))
-
-print('--------------------------------------------------------')
-
-# --- DECRYPTION ---
-
-state = output
-
-state = addRoundKey(state,getRoundKey(10))
-
-# **The next 9 rounds**
-# Backwards for loop
-for i in range(9,0,-1):
-    state = shiftRowsInv(state)
-    state = subBytesInv(state)
-    state = addRoundKey(state,getRoundKey(i))
-    state = mixColumnsInv(state)
-
-
-# --- Final Round ---
-state = shiftRowsInv(state)
-state = subBytesInv(state)
-decrypted = addRoundKey(state,getRoundKey(0))
-print('--------------------')
-print(matrixOutput(decrypted))
-
-
-print(state)"""
